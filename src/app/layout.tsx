@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { SessionProvider } from "next-auth/react";
 
 import { Toaster } from "@/components/ui/toaster";
 import NavBar from "@/components/NavBar";
@@ -24,9 +25,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <NavBar />
-        {children}
-        <Toaster />
+        <SessionProvider>
+          <NavBar />
+          {children}
+          <Toaster />
+        </SessionProvider>
       </body>
     </html>
   );

@@ -1,13 +1,14 @@
+"use client";
+
 import Link from "next/link";
+import { useSession, signIn } from "next-auth/react";
 
 import UserButton from "@/components/UserButton";
-import getSession from "@/lib/getSession";
 import { Button } from "@/components/ui/button";
-import { signIn } from "@/auth";
 
-export default async function NavBar() {
-  const session = await getSession();
-  const user = session?.user;
+export default function NavBar() {
+  const session = useSession();
+  const user = session.data?.user;
 
   return (
     <header className="sticky top-0 bg-background px-3 shadow-sm">
@@ -15,22 +16,13 @@ export default async function NavBar() {
         <Link href="/" className="font-bold">
           Next-Auth v5 Tutorial
         </Link>
-        {user ? <UserButton user={user} /> : <SignInButton />}
+        {user && <UserButton user={user} />}
+        {!user && session.status !== "loading" && <SignInButton />}
       </nav>
     </header>
   );
 }
 
 function SignInButton() {
-  return (
-    <form
-      action={async () => {
-        "use server";
-        await signIn();
-      }}
-      className=""
-    >
-      <Button type="submit">Sign In</Button>
-    </form>
-  );
+  return <Button onClick={() => signIn()}>Sign In</Button>;
 }
